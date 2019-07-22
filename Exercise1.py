@@ -1,4 +1,5 @@
 import numpy as np
+
 import math
 try:
     from cv2 import cv2 as cv
@@ -94,6 +95,60 @@ def cumulative_histogram(hist):
 def isGrayScale(img):
     if(len(img.shape) < 3): return True
     else: return False
+
+
+def quantizeImage(imOrig:np.ndarray, nQuant:int, nIter:int)->(list[np.ndarray],list[float]):
+    yiq_im = []
+
+    if len(imOrig.shape) == 3:
+        yiq_im = transformRGB2YIQ(imOrig)
+        init_im = yiq_im[:, :, 0].copy()
+    else:
+        init_im = imOrig.copy()
+
+    hist, bin_edges = np.histogram(init_im, 256)
+    hist_cum = np.cumsum(hist)
+    pixInSegment = int(hist_cum[-1] / nQuant)
+
+    error, qArr, zArr = segmtents_quantization(bin_edges, hist, hist_cum, nIter, nQuant, pixInSegment)
+
+    for segNum in range(nQuant):
+        inSeg = np.logical_and(init_im >= zArr[segNum], init_im < zArr[segNum + 1])
+        init_im[inSeg] = qArr[segNum]
+
+    init_im[init_im == 1] = qArr[-1]
+
+    im_quant = init_im
+    if len(imOrig.shape) == 3:
+        yiq_im[:, :, 0] = im_quant
+        im_quant = transformYIQ2RGB(yiq_im)
+
+    return [im_quant, np.array(error)]
+
+def segmtents_quantization(bin_edges, hist, hist_cum, n_iter, n_quant, pixInSegment):
+    zArr = np.array([0] + [bin_edges[np.where(hist_cum >= pixInSegment * i)[0][0]] for i in range(1, n_quant)] + [1])
+    qArr = np.zeros(n_quant)
+    error = []
+    for i in range(n_iter):
+        curZ = zArr.copy()
+        curErr = 0
+
+        for k in range(n_quant):
+            if k != n_quant - 1:
+                curSeg = np.intersect1d(np.where(bin_edges[:-1] >= zArr[k])[0],
+                                        np.where(bin_edges[:-1] < zArr[k + 1])[0])
+            else:
+                curSeg = np.intersect1d(np.where(bin_edges[:-1] >= zArr[k])[0],
+                                        np.where(bin_edges[:-1] <= zArr[k + 1])[0])
+
+            qArr[k] = np.dot(bin_edges[curSeg], hist[curSeg]) / np.sum(hist[curSeg])
+            curErr += np.dot(np.power(qArr[k] - bin_edges[curSeg], 2), hist[curSeg])
+        error.append(curErr)
+        zArr = np.array([0] + [(qArr[k] + qArr[k - 1]) / 2 for k in range(1, n_quant)] + [1])
+        if np.array_equal(zArr, curZ):
+            break
+    return error, qArr, zArr
+
 
 # imDisplay("/home/oravital7/Downloads/rgbImage.png",1)
 # transformYIQ2RGB(imReadAndConvert("/home/oravital7/Downloads/rgbImage.png",2))
