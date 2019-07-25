@@ -8,6 +8,7 @@ except ImportError:
 
 np.set_printoptions(threshold=np.inf)
 
+# 3.1 Exercise
 def imReadAndConvert(filename:str, representation:int)->np.ndarray:
     if representation == 1:
         img = cv.imread(filename,0)
@@ -19,7 +20,7 @@ def imReadAndConvert(filename:str, representation:int)->np.ndarray:
 
     return img/255.0
 
-
+# 3.2 Exercise
 def imDisplay(filename:str, representation:int):
     img = imReadAndConvert(filename,representation)
     cv.imshow("img",img)
@@ -27,6 +28,7 @@ def imDisplay(filename:str, representation:int):
     cv.destroyAllWindows()
 
 
+# 3.3 Exercise
 def transformRGB2YIQ(imRGB:np.ndarray)->np.ndarray:
      yiq_from_rgb = np.array([[0.299, 0.587, 0.114],
                                 [0.59590059, -0.27455667, -0.32134392],
@@ -41,7 +43,7 @@ def transformYIQ2RGB(imYIQ:np.ndarray)->np.ndarray:
     return np.dot(imYIQ, rgb_from_yiq.T)
 
 
-
+# 3.4 Exercise
 def histogramEqualize(imOrig:np.ndarray)->(np.ndarray,np.ndarray,np.ndarray):
     imOrig *= 255
     imOrig = imOrig.astype(int)
@@ -96,7 +98,7 @@ def isGrayScale(img):
     if(len(img.shape) < 3): return True
     else: return False
 
-
+# 3.5 Exercise
 def quantizeImage(imOrig:np.ndarray, nQuant:int, nIter:int):
     yiq_im = []
 
