@@ -32,13 +32,13 @@ def transformRGB2YIQ(imRGB:np.ndarray)->np.ndarray:
                                 [0.59590059, -0.27455667, -0.32134392],
                                 [0.21153661, -0.52273617, 0.31119955]])
 
-     return np.dot(imRGB, yiq_from_rgb.T.copy())
+     return np.dot(imRGB, yiq_from_rgb.T)
 
 def transformYIQ2RGB(imYIQ:np.ndarray)->np.ndarray:
     rgb_from_yiq = np.array([[1,0.956,0.619],
                             [1,-0.272,-0.647],
                              [1,-1.106,1.703]])
-    return np.dot(imYIQ, rgb_from_yiq.T.copy())
+    return np.dot(imYIQ, rgb_from_yiq.T)
 
 
 
@@ -97,7 +97,7 @@ def isGrayScale(img):
     else: return False
 
 
-def quantizeImage(imOrig:np.ndarray, nQuant:int, nIter:int)->(list[np.ndarray],list[float]):
+def quantizeImage(imOrig:np.ndarray, nQuant:int, nIter:int):
     yiq_im = []
 
     if len(imOrig.shape) == 3:
@@ -148,11 +148,3 @@ def segmtents_quantization(bin_edges, hist, hist_cum, n_iter, n_quant, pixInSegm
         if np.array_equal(zArr, curZ):
             break
     return error, qArr, zArr
-
-
-# imDisplay("/home/oravital7/Downloads/rgbImage.png",1)
-# transformYIQ2RGB(imReadAndConvert("/home/oravital7/Downloads/rgbImage.png",2))
-x = imReadAndConvert("/home/oravital7/Downloads/rgbImage.png",1)
-y = histogramEqualize(x)
-print(y[2])
-# print(y)
