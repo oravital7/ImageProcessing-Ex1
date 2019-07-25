@@ -8,7 +8,7 @@ except ImportError:
 
 np.set_printoptions(threshold=np.inf)
 
-# 3.1 Exercise
+# 3.1 Exercis - Normalize
 def imReadAndConvert(filename:str, representation:int)->np.ndarray:
     if representation == 1:
         img = cv.imread(filename,0)
@@ -20,7 +20,7 @@ def imReadAndConvert(filename:str, representation:int)->np.ndarray:
 
     return img/255.0
 
-# 3.2 Exercise
+# 3.2 Exercise - Read and Display
 def imDisplay(filename:str, representation:int):
     img = imReadAndConvert(filename,representation)
     cv.imshow("img",img)
@@ -30,23 +30,23 @@ def imDisplay(filename:str, representation:int):
 
 # 3.3 Exercise
 def transformRGB2YIQ(imRGB:np.ndarray)->np.ndarray:
-     yiq_from_rgb = np.array([[0.299, 0.587, 0.114],
+     yiq_from_rgb = np.array([[0.299, 0.587, 0.114], # Double matrix by definition
                                 [0.59590059, -0.27455667, -0.32134392],
                                 [0.21153661, -0.52273617, 0.31119955]])
 
-     return np.dot(imRGB, yiq_from_rgb.T)
+     return np.dot(imRGB, yiq_from_rgb.T) # multiple matrices with numpy
 
 def transformYIQ2RGB(imYIQ:np.ndarray)->np.ndarray:
-    rgb_from_yiq = np.array([[1,0.956,0.619],
+    rgb_from_yiq = np.array([[1,0.956,0.619],  # Double matrix by definition
                             [1,-0.272,-0.647],
                              [1,-1.106,1.703]])
-    return np.dot(imYIQ, rgb_from_yiq.T)
+    return np.dot(imYIQ, rgb_from_yiq.T) # multiple matrices with numpy
 
 
 # 3.4 Exercise
 def histogramEqualize(imOrig:np.ndarray)->(np.ndarray,np.ndarray,np.ndarray):
-    imOrig *= 255
-    imOrig = imOrig.astype(int)
+    imOrig *= 255 # back matrix to values [0,255]
+    imOrig = imOrig.astype(int) # make shure is type of int (we want to access to i Intensity element)
     img1 = imOrig
 
     height = imOrig.shape[0]
@@ -71,7 +71,7 @@ def histogramEqualize(imOrig:np.ndarray)->(np.ndarray,np.ndarray,np.ndarray):
     return (imOrig, hist_origi,hist_eq)
 
 
-
+# return histogram of the image
 def histogram(img):
     height = img.shape[0]
     width = img.shape[1]
@@ -85,7 +85,7 @@ def histogram(img):
 
     return hist
 
-
+# return cumlative histogram of the image
 def cumulative_histogram(hist):
     cum_hist = hist.copy()
 
@@ -94,6 +94,7 @@ def cumulative_histogram(hist):
 
     return cum_hist
 
+# hust check if it's gray scale or not
 def isGrayScale(img):
     if(len(img.shape) < 3): return True
     else: return False
