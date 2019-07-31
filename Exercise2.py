@@ -58,7 +58,6 @@ def conv2D(inImage:np.ndarray,kernel2:np.ndarray)->np.ndarray:
 #2.1
 def convDerivative(inImage:np.ndarray) -> np.ndarray:
     kernel = np.array([[1, 0, -1], [1, 0, -1], [1, 0, -1]])
-
     rows = cv.filter2D(img, -1, kernel)
     cols = cv.filter2D(img, -1 , np.transpose(kernel))
     rows = rows*rows
@@ -74,10 +73,12 @@ def convDerivative(inImage:np.ndarray) -> np.ndarray:
 
 
 
-# #2.2
+ #2.2
 def blurImage1(inImage:np.ndarray,kernelSize:np.ndarray)->np.ndarray:
     kernel = CreateBlurKernel(kernelSize)
+
     rs = conv2D(inImage, kernel)
+    print("im")
     cv.imshow("myImage", rs)
     cv.waitKey(0)
     return rs
@@ -96,15 +97,26 @@ def CreateBlurKernel(kernelSize):
             sum += g;
             kernel[u][v] = g;
 
-            for u in range(kernelSize):
-                for v in range(kernelSize):
-                    kernel[u][v] /= sum
+    for u in range(kernelSize):
+        for v in range(kernelSize):
+            kernel[u][v] /= sum
 
-            return kernel
+    return kernel
+
+
+
+
+ #2.2
+def blurImage2(inImage:np.ndarray,kernelSize:np.ndarray)->np.ndarray:
+    blur = cv.GaussianBlur(inImage, (kernelSize, kernelSize), 0)
+    return blur
+
+
 
 
 img = cv.imread("/home/oravital7/PycharmProjects/untitled/testImageDana.jpg",0)
-cv.imshow("myImage2", img)
-cv.waitKey(0)
-# blurImage1(img ,3)
+# cv.imshow("myImage2", img)
+# cv.waitKey(0)
+blurImage1(img,13)
+# blurImage2(img, 13)
 print('finish')
