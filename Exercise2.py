@@ -112,11 +112,22 @@ def blurImage2(inImage:np.ndarray,kernelSize:np.ndarray)->np.ndarray:
     return blur
 
 
+#2.3
+def edgeDetectionSobel(I:np.ndarray)->(np.ndarray,np.ndarray):
+    Gx = np.array([[-1,0,1],
+                  [-2,0,2],
+                  [-1,0,1]])
+    Gy = np.array([[-1,-2,-1],
+                  [0,0,0],
+                  [1,2,1]])
 
+    Gcx = cv.filter2D(I,-1, Gx)
+    Gcy =  cv.filter2D(I,-1, Gy)
 
-img = cv.imread("/home/oravital7/PycharmProjects/untitled/testImageDana.jpg",0)
-# cv.imshow("myImage2", img)
-# cv.waitKey(0)
-blurImage1(img,13)
-# blurImage2(img, 13)
-print('finish')
+    rs = np.matmul(Gcx,Gcx)+np.matmul(Gcy,Gcy)
+
+    cv.imshow("myImage", rs)
+    cv.waitKey(0)
+
+img = cv.imread("/home/oravital7/PycharmProjects/untitled/testSmooth.jpeg",0)
+edgeDetectionSobel(img)
