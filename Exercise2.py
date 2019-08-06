@@ -2,7 +2,7 @@ import numpy as np
 
 import math
 try:
-    from cv2 import cv2 as cv
+    from cv2 import cv2
 except ImportError:
     pass
 
@@ -59,8 +59,8 @@ def conv2D(inImage:np.ndarray,kernel2:np.ndarray)->np.ndarray:
 #2.1
 def convDerivative(inImage:np.ndarray) -> np.ndarray:
     kernel = np.array([[1, 0, -1], [1, 0, -1], [1, 0, -1]])
-    rows = cv.filter2D(inImage, -1, kernel)
-    cols = cv.filter2D(inImage, -1 , np.transpose(kernel))
+    rows = cv2.filter2D(inImage, -1, kernel)
+    cols = cv2.filter2D(inImage, -1 , np.transpose(kernel))
     rows = rows*rows
     cols = cols*cols
     power = rows*rows+cols*cols
@@ -69,8 +69,8 @@ def convDerivative(inImage:np.ndarray) -> np.ndarray:
         for j in range(0, power.shape[1]):
             power[i,j] = power[i,j]**(0.5)
 
-    cv.imshow("myImage", power)
-    cv.waitKey(0)
+    cv2.imshow("myImage", power)
+    cv2.waitKey(0)
 
 
 
@@ -78,9 +78,9 @@ def convDerivative(inImage:np.ndarray) -> np.ndarray:
 def blurImage1(inImage:np.ndarray,kernelSize:np.ndarray)->np.ndarray:
     kernel = CreateBlurKernel(kernelSize)
     #rs = conv2D(inImage, kernel)
-    rs=cv.filter2D(inImage, -1, kernel)
-    cv.imshow("myImage", rs)
-    cv.waitKey(0)
+    rs=cv2.filter2D(inImage, -1, kernel)
+    cv2.imshow("myImage", rs)
+    cv2.waitKey(0)
     return rs
 
 
@@ -109,7 +109,7 @@ def CreateBlurKernel(kernelSize):
 
  #3.0
 def blurImage2(inImage:np.ndarray,kernelSize:np.ndarray)->np.ndarray:
-    blur = cv.GaussianBlur(inImage, (kernelSize, kernelSize), 0)
+    blur = cv2.GaussianBlur(inImage, (kernelSize, kernelSize), 0)
     return blur
 
 
@@ -123,26 +123,22 @@ def edgeDetectionSobel(I:np.ndarray)->(np.ndarray,np.ndarray):
                   [1,2,1]])
 
 
-    Gcx = cv.filter2D(I,-1, Gx)
-    Gcy =  cv.filter2D(I,-1, Gy)
+    Gcx = cv2.filter2D(I,-1, Gx)
+    Gcy =  cv2.filter2D(I,-1, Gy)
 
 
 
     rs = np.matmul(Gcx,Gcx)+np.matmul(Gcy,Gcy)
 
     rs=np.sqrt(rs)
-
-    cv.imshow("myImage", rs)
-    cv.waitKey(0)
-
     return rs
 
 
 #3.2
 def edgeDetectionZeroCrossingSimple(I:np.ndarray)->(np.ndarray,np.ndarray):
 
-    src_gray = cv.cvtColor(I, cv.COLOR_BGR2GRAY)
-    lap = cv.Laplacian(src_gray, cv.CV_16S, ksize=7)
+    src_gray = cv2.cvtColor(I, cv2.COLOR_BGR2GRAY)
+    lap = cv2.Laplacian(src_gray, cv2.CV_16S, ksize=7)
 
     # TO DO :
     # Look for patterns like {+, 0, -} or {+, -} (zerocrossing) not sure what to do
@@ -155,19 +151,15 @@ def edgeDetectionZeroCrossingLOG(I:np.ndarray)->(np.ndarray,np.ndarray):
     I = blurImage2(I, 9)
 
     # turn to GrayScale and activate laplace filter
-    src_gray = cv.cvtColor(I, cv.COLOR_BGR2GRAY)
-    lap = cv.Laplacian(src_gray, cv.CV_16S, ksize=7)
+    src_gray = cv2.cvtColor(I, cv2.COLOR_BGR2GRAY)
+    lap = cv2.Laplacian(src_gray, cv2.CV_16S, ksize=7)
 
-    # TO DO :
-    # Look for patterns like {+, 0, -} or {+, -} (zerocrossing) not sure what to do
 
     # show the img
     # activate abs only if you want to show the picture
     # make sure you find the edge points before using abs
 
-    lap = cv.convertScaleAbs(lap)
-    cv.imshow('title', lap)
-    cv.waitKey(0)
+    lap = cv2.convertScaleAbs(lap)
 
     return lap
 
@@ -186,30 +178,28 @@ def edgeDetectionCanny(I:np.ndarray)->(np.ndarray,np.ndarray):
                    [0, 0, 0],
                    [1, 2, 1]])
 
-    Gcx = cv.filter2D(I, -1, Gx)
-    Gcy = cv.filter2D(I, -1, Gy)
+    Gcx = cv2.filter2D(I, -1, Gx)
+    Gcy = cv2.filter2D(I, -1, Gy)
 
     rs = np.matmul(Gcx, Gcx) + np.matmul(Gcy, Gcy)
 
     rs = np.sqrt(rs)
     angle = np.arctan(Gcx/Gcy)
 
-    #need to check for each pixel , go through his neibhors and check if he is maximum
+    #need to check for each pixel , go through his neighbors and check if he is maximum
     #if he is he stays otherwise change it to zero
 
  # 4.0
 def houghCircle(I:np.ndarray,minRadius:float,maxRadius:float)->np.ndarray:
     #https://www.youtube.com/watch?v=-o9jNEbR5P8
-    I=cv.cvtColor(I,cv.COLOR_BGR2GRAY)
+    I=cv2.cvtColor(I,cv2.COLOR_BGR2GRAY)
     I=blurImage1(I,21)
 
-    circ= cv.HoughCircles(I,cv.cv.CV_HOUGH_GRADIENT,0.9,120
+    circ= cv2.HoughCircles(I,cv2.CV_HOUGH_GRADIENT,0.9,120
                           ,param1=50,param2=30
                           ,minRadius=minRadius ,maxRadius=maxRadius)
     roundCirc=np.uint16(np.around(circ))
 
     return roundCirc
 
-# img = cv.imread("/home/oravital7/PycharmProjects/untitled/testSmooth.jpeg",0)
-# edgeDetectionSobel(img)
 
