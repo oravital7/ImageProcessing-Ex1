@@ -107,13 +107,13 @@ def CreateBlurKernel(kernelSize):
 
 
 
- #2.2
+ #3.0
 def blurImage2(inImage:np.ndarray,kernelSize:np.ndarray)->np.ndarray:
     blur = cv.GaussianBlur(inImage, (kernelSize, kernelSize), 0)
     return blur
 
 
-#2.3
+#3.1
 def edgeDetectionSobel(I:np.ndarray)->(np.ndarray,np.ndarray):
     Gx = np.array([[-1,0,1],
                   [-2,0,2],
@@ -138,7 +138,7 @@ def edgeDetectionSobel(I:np.ndarray)->(np.ndarray,np.ndarray):
     return rs
 
 
-
+#3.2
 def edgeDetectionZeroCrossingSimple(I:np.ndarray)->(np.ndarray,np.ndarray):
 
     src_gray = cv.cvtColor(I, cv.COLOR_BGR2GRAY)
@@ -148,6 +148,8 @@ def edgeDetectionZeroCrossingSimple(I:np.ndarray)->(np.ndarray,np.ndarray):
     # Look for patterns like {+, 0, -} or {+, -} (zerocrossing) not sure what to do
 
     return lap
+
+#3.3
 def edgeDetectionZeroCrossingLOG(I:np.ndarray)->(np.ndarray,np.ndarray):
     # smooth with gaussian
     I = blurImage2(I, 9)
@@ -170,7 +172,7 @@ def edgeDetectionZeroCrossingLOG(I:np.ndarray)->(np.ndarray,np.ndarray):
     return lap
 
 
-
+#3.3
 def edgeDetectionCanny(I:np.ndarray)->(np.ndarray,np.ndarray):
     #https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_canny/py_canny.html
     #first blur the image
@@ -195,6 +197,7 @@ def edgeDetectionCanny(I:np.ndarray)->(np.ndarray,np.ndarray):
     #need to check for each pixel , go through his neibhors and check if he is maximum
     #if he is he stays otherwise change it to zero
 
+ # 4.0
 def houghCircle(I:np.ndarray,minRadius:float,maxRadius:float)->np.ndarray:
     #https://www.youtube.com/watch?v=-o9jNEbR5P8
     I=cv.cvtColor(I,cv.COLOR_BGR2GRAY)
